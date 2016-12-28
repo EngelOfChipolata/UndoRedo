@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group name="MasterIHM 2016">
+            <file>file:/D:/Users/David%20Navarre/Documents/NetBeansProjects/Teaching/DrawingTools_Base/src/fr/ups/m2ihm/drawingtool/model/DrawingToolModel.java</file>
+            <file>file:/D:/Users/David%20Navarre/Documents/NetBeansProjects/Teaching/DrawingTools_Base/src/fr/ups/m2ihm/drawingtool/model/core/Shape.java</file>
+            <file>file:/D:/Users/David%20Navarre/Documents/NetBeansProjects/Teaching/DrawingTools_Base/src/fr/ups/m2ihm/drawingtool/model/core/DrawingToolCore.java</file>
+            <file>file:/D:/Users/David%20Navarre/Documents/NetBeansProjects/Teaching/DrawingTools_Base/src/fr/ups/m2ihm/drawingtool/ihm/DrawingRectangle.java</file>
+            <file>file:/D:/Users/David%20Navarre/Documents/NetBeansProjects/Teaching/DrawingTools_Base/src/fr/ups/m2ihm/drawingtool/model/DrawingEvent.java</file>
+            <file>file:/D:/Users/David%20Navarre/Documents/NetBeansProjects/Teaching/DrawingTools_Base/src/fr/ups/m2ihm/drawingtool/model/core/Rectangle.java</file>
+            <file>file:/D:/Users/David%20Navarre/Documents/NetBeansProjects/Teaching/DrawingTools_Base/src/fr/ups/m2ihm/drawingtool/model/RectangleStateMachine.java</file>
+            <file>file:/D:/Users/David%20Navarre/Documents/NetBeansProjects/Teaching/DrawingTools_Base/src/fr/ups/m2ihm/drawingtool/undomanager/Command.java</file>
+            <file>file:/D:/Users/David%20Navarre/Documents/NetBeansProjects/Teaching/DrawingTools_Base/src/fr/ups/m2ihm/drawingtool/ihm/DrawingTool.java</file>
+            <file>file:/D:/Users/David%20Navarre/Documents/NetBeansProjects/Teaching/DrawingTools_Base/src/fr/ups/m2ihm/drawingtool/ihm/DrawingShape.java</file>
+            <file>file:/D:/Users/David%20Navarre/Documents/NetBeansProjects/Teaching/DrawingTools_Base/src/fr/ups/m2ihm/drawingtool/model/DefaultDrawingToolModel.java</file>
+            <file>file:/D:/Users/David%20Navarre/Documents/NetBeansProjects/Teaching/DrawingTools_Base/src/fr/ups/m2ihm/drawingtool/model/PaletteEventType.java</file>
+            <file>file:/D:/Users/David%20Navarre/Documents/NetBeansProjects/Teaching/DrawingTools_Base/src/fr/ups/m2ihm/drawingtool/model/PaletteEvent.java</file>
+            <file>file:/D:/Users/David%20Navarre/Documents/NetBeansProjects/Teaching/DrawingTools_Base/src/fr/ups/m2ihm/drawingtool/model/DrawingStateMachine.java</file>
+            <file>file:/D:/Users/David%20Navarre/Documents/NetBeansProjects/Teaching/DrawingTools_Base/src/fr/ups/m2ihm/drawingtool/ihm/WhiteBoardPanel.java</file>
+            <file>file:/D:/Users/David%20Navarre/Documents/NetBeansProjects/Teaching/DrawingTools_Base/src/fr/ups/m2ihm/drawingtool/model/core/Line.java</file>
+            <file>file:/D:/Users/David%20Navarre/Documents/NetBeansProjects/Teaching/DrawingTools_Base/src/fr/ups/m2ihm/drawingtool/ihm/DrawingLine.java</file>
+            <file>file:/D:/Users/David%20Navarre/Documents/NetBeansProjects/Teaching/DrawingTools_Base/src/fr/ups/m2ihm/drawingtool/Main.java</file>
+            <file>file:/D:/Users/David%20Navarre/Documents/NetBeansProjects/Teaching/DrawingTools_Base/src/fr/ups/m2ihm/drawingtool/model/LineStateMachine.java</file>
+            <file>file:/D:/Users/David%20Navarre/Documents/NetBeansProjects/Teaching/DrawingTools_Base/src/fr/ups/m2ihm/drawingtool/model/core/DefaultDrawingToolCore.java</file>
+            <file>file:/D:/Users/David%20Navarre/Documents/NetBeansProjects/Teaching/DrawingTools_Base/src/fr/ups/m2ihm/drawingtool/model/DrawingEventType.java</file>
+            <file>file:/D:/Users/David%20Navarre/Documents/NetBeansProjects/Teaching/DrawingTools_Base/src/fr/ups/m2ihm/drawingtool/undomanager/UndoEvent.java</file>
+            <file>file:/D:/Users/David%20Navarre/Documents/NetBeansProjects/Teaching/DrawingTools_Base/src/fr/ups/m2ihm/drawingtool/model/CreateShapeCommand.java</file>
+            <file>file:/D:/Users/David%20Navarre/Documents/NetBeansProjects/Teaching/DrawingTools_Base/src/fr/ups/m2ihm/drawingtool/undomanager/UndoManager.java</file>
+        </group>
+    </open-files>
+</project-private>
