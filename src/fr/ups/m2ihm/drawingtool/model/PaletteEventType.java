@@ -2,7 +2,8 @@ package fr.ups.m2ihm.drawingtool.model;
 
 public enum PaletteEventType {
     DRAW_LINE("drawLineProperty"),
-    DRAW_RECTANGLE("drawRectangleProperty");
+    DRAW_RECTANGLE("drawRectangleProperty"),
+    REGIONAL_UNDO("regionalUndoProperty");
     private final String propertyName;
 
     private PaletteEventType(String propertyName) {

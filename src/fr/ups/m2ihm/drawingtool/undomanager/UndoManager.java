@@ -4,6 +4,9 @@
  */
 package fr.ups.m2ihm.drawingtool.undomanager;
 
+import fr.ups.m2ihm.drawingtool.ihm.DrawingShape;
+import fr.ups.m2ihm.drawingtool.model.core.Rectangle;
+import fr.ups.m2ihm.drawingtool.model.CreateShapeCommand;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Collections;
@@ -108,6 +111,66 @@ public class UndoManager {
                 redoableCommands.clear();
                 firePropertyChange(UNDO_COMMANDS_PROPERTY, null, undoableCommands);
                 firePropertyChange(REDO_COMMANDS_PROPERTY, null, redoableCommands);
+                break;
+        }
+    }
+    
+    private Command findLastShapeCommandIn(Rectangle rect){
+        Command lastShapeCommandInRectangle = null;
+        for (Command c: undoableCommands){
+            if (c instanceof CreateShapeCommand && ((CreateShapeCommand)c).isInside(rect)){
+                lastShapeCommandInRectangle = c;
+            }
+        }
+        return lastShapeCommandInRectangle;
+    }
+    
+    public void regionalUndo(Rectangle rectangle){
+        Command undoneCommand;
+        switch (currentState) {
+            case IDLE:
+                break;
+            case UNDO_ONLY:
+                undoneCommand = findLastShapeCommandIn(rectangle);
+                if (undoableCommands.size() == 1 && undoneCommand != null) {
+                    gotoState(PossibleState.REDO_ONLY);
+                    undoableCommands.remove(undoneCommand);
+                    undoneCommand.undo();
+                    redoableCommands.push(undoneCommand);
+                    firePropertyChange(UNDO_COMMANDS_PROPERTY, null, undoableCommands);
+                    firePropertyChange(REDO_COMMANDS_PROPERTY, null, redoableCommands);
+                } else if (undoableCommands.size() > 1 && undoneCommand != null) {
+                    gotoState(PossibleState.UNDO_REDOABLE);
+                    undoableCommands.remove(undoneCommand);
+                    undoneCommand.undo();
+                    redoableCommands.push(undoneCommand);
+                    firePropertyChange(UNDO_COMMANDS_PROPERTY, null, undoableCommands);
+                    firePropertyChange(REDO_COMMANDS_PROPERTY, null, redoableCommands);
+                }else{
+                    gotoState(PossibleState.UNDO_ONLY);
+                }
+                break;
+            case REDO_ONLY:
+                break;
+            case UNDO_REDOABLE:
+                undoneCommand = findLastShapeCommandIn(rectangle);
+                if (undoableCommands.size() == 1 && undoneCommand != null) {
+                    gotoState(PossibleState.REDO_ONLY);
+                    undoableCommands.remove(undoneCommand);
+                    undoneCommand.undo();
+                    redoableCommands.push(undoneCommand);
+                    firePropertyChange(UNDO_COMMANDS_PROPERTY, null, undoableCommands);
+                    firePropertyChange(REDO_COMMANDS_PROPERTY, null, redoableCommands);
+                } else if (undoableCommands.size() > 1 && undoneCommand != null) {
+                    gotoState(PossibleState.UNDO_REDOABLE);
+                    undoableCommands.remove(undoneCommand);
+                    undoneCommand.undo();
+                    redoableCommands.push(undoneCommand);
+                    firePropertyChange(UNDO_COMMANDS_PROPERTY, null, undoableCommands);
+                    firePropertyChange(REDO_COMMANDS_PROPERTY, null, redoableCommands);
+                }else{
+                    gotoState(PossibleState.UNDO_REDOABLE);
+                }
                 break;
         }
     }

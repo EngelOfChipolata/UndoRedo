@@ -71,7 +71,7 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="0" pref="191" max="32767" attributes="0"/>
+              <EmptySpace min="0" pref="168" max="32767" attributes="0"/>
           </Group>
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
@@ -92,6 +92,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="btnLine" max="32767" attributes="0"/>
                       <Component id="btnRectangle" max="32767" attributes="0"/>
+                      <Component id="btnRegUndo" alignment="0" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -105,6 +106,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="btnRectangle" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
+                  <Component id="btnRegUndo" min="-2" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -126,6 +128,14 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnRectangleActionPerformed"/>
           </Events>
         </Component>
+        <Component class="javax.swing.JButton" name="btnRegUndo">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Regional Undo"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnRegUndoActionPerformed"/>
+          </Events>
+        </Component>
       </SubComponents>
     </Container>
     <Container class="fr.ups.m2ihm.drawingtool.ihm.WhiteBoardPanel" name="whiteBoardPanel">
@@ -144,7 +154,7 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <EmptySpace min="0" pref="284" max="32767" attributes="0"/>
+              <EmptySpace min="0" pref="255" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
