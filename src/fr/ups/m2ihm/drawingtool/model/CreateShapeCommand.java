@@ -35,6 +35,13 @@ public class CreateShapeCommand implements Command {
     public void undo() {
         core.removeShape(shape);
     }
+
+    @Override
+    public String toString() {
+        return "Create " + shape.toString();
+    }
+    
+    
     
     public boolean isInside(Rectangle rectangle){
         Point upperLeftBoundary = rectangle.getUpperLeftCorner();

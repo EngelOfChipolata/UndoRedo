@@ -36,6 +36,13 @@ public class UndoManager {
         return PossibleState.REDO_ONLY.equals(currentState) || PossibleState.UNDO_REDOABLE.equals(currentState);
     }
 
+    public int getRelativeCommandDistance(int i) {
+        //The total number of command is undoableCommand.size() + redoableCommand.size()
+        //The absolute command lastly executed is undoableCommand.size() - 1
+        return -(undoableCommands.size() - i);
+
+    }
+
     private enum PossibleState {
 
         IDLE, UNDO_ONLY, REDO_ONLY, UNDO_REDOABLE
@@ -114,18 +121,18 @@ public class UndoManager {
                 break;
         }
     }
-    
-    private Command findLastShapeCommandIn(Rectangle rect){
+
+    private Command findLastShapeCommandIn(Rectangle rect) {
         Command lastShapeCommandInRectangle = null;
-        for (Command c: undoableCommands){
-            if (c instanceof CreateShapeCommand && ((CreateShapeCommand)c).isInside(rect)){
+        for (Command c : undoableCommands) {
+            if (c instanceof CreateShapeCommand && ((CreateShapeCommand) c).isInside(rect)) {
                 lastShapeCommandInRectangle = c;
             }
         }
         return lastShapeCommandInRectangle;
     }
-    
-    public void regionalUndo(Rectangle rectangle){
+
+    public void regionalUndo(Rectangle rectangle) {
         Command undoneCommand;
         switch (currentState) {
             case IDLE:
@@ -146,7 +153,7 @@ public class UndoManager {
                     redoableCommands.push(undoneCommand);
                     firePropertyChange(UNDO_COMMANDS_PROPERTY, null, undoableCommands);
                     firePropertyChange(REDO_COMMANDS_PROPERTY, null, redoableCommands);
-                }else{
+                } else {
                     gotoState(PossibleState.UNDO_ONLY);
                 }
                 break;
@@ -168,7 +175,7 @@ public class UndoManager {
                     redoableCommands.push(undoneCommand);
                     firePropertyChange(UNDO_COMMANDS_PROPERTY, null, undoableCommands);
                     firePropertyChange(REDO_COMMANDS_PROPERTY, null, redoableCommands);
-                }else{
+                } else {
                     gotoState(PossibleState.UNDO_REDOABLE);
                 }
                 break;
@@ -219,6 +226,62 @@ public class UndoManager {
         }
     }
 
+    public void undo(int n) {
+        Command undoneCommand;
+        switch (currentState) {
+            case IDLE:
+                break;
+            case UNDO_ONLY:
+                if (undoableCommands.size() == n) {
+                    gotoState(PossibleState.REDO_ONLY);
+                    for (int i = 0; i < n; i++) {
+                        undoneCommand = undoableCommands.pop();
+                        undoneCommand.undo();
+                        redoableCommands.push(undoneCommand);
+                    }
+                    firePropertyChange(UNDO_COMMANDS_PROPERTY, null, undoableCommands);
+                    firePropertyChange(REDO_COMMANDS_PROPERTY, null, redoableCommands);
+                } else if (undoableCommands.size() > 1) {
+                    gotoState(PossibleState.UNDO_REDOABLE);
+                    for (int i = 0; i < n; i++) {
+                        undoneCommand = undoableCommands.pop();
+                        undoneCommand.undo();
+                        redoableCommands.push(undoneCommand);
+                    }
+                    firePropertyChange(UNDO_COMMANDS_PROPERTY, null, undoableCommands);
+                    firePropertyChange(REDO_COMMANDS_PROPERTY, null, redoableCommands);
+                } else {
+                    throw new IndexOutOfBoundsException("Too many commands to Undo : " + n);
+                }
+                break;
+            case REDO_ONLY:
+                break;
+            case UNDO_REDOABLE:
+                if (undoableCommands.size() == n) {
+                    gotoState(PossibleState.REDO_ONLY);
+                    for (int i = 0; i < n; i++) {
+                        undoneCommand = undoableCommands.pop();
+                        undoneCommand.undo();
+                        redoableCommands.push(undoneCommand);
+                    }
+                    firePropertyChange(UNDO_COMMANDS_PROPERTY, null, undoableCommands);
+                    firePropertyChange(REDO_COMMANDS_PROPERTY, null, redoableCommands);
+                } else if (undoableCommands.size() > n) {
+                    gotoState(PossibleState.UNDO_REDOABLE);
+                    for (int i = 0; i < n; i++) {
+                        undoneCommand = undoableCommands.pop();
+                        undoneCommand.undo();
+                        redoableCommands.push(undoneCommand);
+                    }
+                    firePropertyChange(UNDO_COMMANDS_PROPERTY, null, undoableCommands);
+                    firePropertyChange(REDO_COMMANDS_PROPERTY, null, redoableCommands);
+                } else {
+                    throw new IndexOutOfBoundsException("Too many commands to Undo : " + n);
+                }
+                break;
+        }
+    }
+
     public void redo() {
         Command redoneCommand;
         switch (currentState) {
@@ -261,6 +324,63 @@ public class UndoManager {
                 }
                 break;
         }
+    }
+
+    public void redo(int n) {
+        Command redoneCommand;
+        switch (currentState) {
+            case IDLE:
+                break;
+            case UNDO_ONLY:
+                break;
+            case REDO_ONLY:
+                if (redoableCommands.size() == n) {
+                    gotoState(PossibleState.UNDO_ONLY);
+                    for (int i = 0; i < n; i++) {
+                        redoneCommand = redoableCommands.pop();
+                        redoneCommand.execute();
+                        undoableCommands.push(redoneCommand);
+                    }
+                    firePropertyChange(UNDO_COMMANDS_PROPERTY, null, undoableCommands);
+                    firePropertyChange(REDO_COMMANDS_PROPERTY, null, redoableCommands);
+                } else if (redoableCommands.size() > n) {
+                    gotoState(PossibleState.UNDO_REDOABLE);
+                    for (int i = 0; i < n; i++) {
+                        redoneCommand = redoableCommands.pop();
+                        redoneCommand.execute();
+                        undoableCommands.push(redoneCommand);
+                    }
+                    firePropertyChange(UNDO_COMMANDS_PROPERTY, null, undoableCommands);
+                    firePropertyChange(REDO_COMMANDS_PROPERTY, null, redoableCommands);
+                } else {
+                    throw new IndexOutOfBoundsException("Too many commands to Redo : " + n);
+                }
+                break;
+            case UNDO_REDOABLE:
+                if (redoableCommands.size() == n) {
+                    gotoState(PossibleState.UNDO_ONLY);
+                    for (int i = 0; i < n; i++) {
+                        redoneCommand = redoableCommands.pop();
+                        redoneCommand.execute();
+                        undoableCommands.push(redoneCommand);
+                    }
+                    firePropertyChange(UNDO_COMMANDS_PROPERTY, null, undoableCommands);
+                    firePropertyChange(REDO_COMMANDS_PROPERTY, null, redoableCommands);
+                } else if (redoableCommands.size() > n) {
+                    gotoState(PossibleState.UNDO_REDOABLE);
+                    for (int i = 0; i < n; i++) {
+                        redoneCommand = redoableCommands.pop();
+                        redoneCommand.execute();
+                        undoableCommands.push(redoneCommand);
+                    }
+                    firePropertyChange(UNDO_COMMANDS_PROPERTY, null, undoableCommands);
+                    firePropertyChange(REDO_COMMANDS_PROPERTY, null, redoableCommands);
+                } else {
+                    throw new IndexOutOfBoundsException("Too many commands to Redo : " + n);
+                }
+                break;
+        }
+
     }
 
     private void enableEvents(

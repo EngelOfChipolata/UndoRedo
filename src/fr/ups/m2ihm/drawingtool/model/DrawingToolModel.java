@@ -9,6 +9,7 @@ public interface DrawingToolModel {
     void handleEvent(PaletteEvent event);
     void undo();
     void redo();
+    void goToCommand(int i);
     void addPropertyListener(PropertyChangeListener listener);
     void addPropertyListener(String propertyName, PropertyChangeListener listener);
     void removePropertyListener(PropertyChangeListener listener);

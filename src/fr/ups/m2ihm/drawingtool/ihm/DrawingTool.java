@@ -24,9 +24,16 @@ import static java.awt.Color.pink;
 import static java.awt.Cursor.getDefaultCursor;
 import static java.awt.Cursor.getPredefinedCursor;
 import static java.awt.event.KeyEvent.VK_ESCAPE;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
 
 /**
  *
@@ -36,6 +43,7 @@ public class DrawingTool extends javax.swing.JFrame {
 
     private final Color DEFAULT_GHOST_COLOR = green;
     private final Color DEFAULT_DRAWING_COLOR = pink;
+    private final DefaultListModel<String> commandsListModel;
     private final DrawingToolModel model;
 
     /**
@@ -43,7 +51,21 @@ public class DrawingTool extends javax.swing.JFrame {
      */
     public DrawingTool() {
         initComponents();
+        
+        commandsListModel = new DefaultListModel<>();
+        commandsList.setModel(commandsListModel);
+        commandsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
         model = new DefaultDrawingToolModel();
+        
+        commandsList.addMouseListener(new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent evt) {
+            JList list = (JList)evt.getSource();
+            int index = list.locationToIndex(evt.getPoint());
+            model.goToCommand(index);
+    }
+});
 
         model.addPropertyListener(GHOST_PROPERTY, (PropertyChangeEvent evt) -> {
             Shape shape1;
@@ -84,10 +106,19 @@ public class DrawingTool extends javax.swing.JFrame {
 
         model.addPropertyListener(UndoManager.UNDO_COMMANDS_PROPERTY, (e) -> {
             menuUndo.setEnabled(!((List) e.getNewValue()).isEmpty());
+            commandsListModel.removeAllElements();
+            commandsListModel.addElement("Init");
+            for (Object o :(List) e.getNewValue()){
+                commandsListModel.addElement(o.toString());
+            }
+            commandsList.setSelectedIndex(((List)e.getNewValue()).size());
         });
 
         model.addPropertyListener(UndoManager.REDO_COMMANDS_PROPERTY, (e) -> {
             menuRedo.setEnabled(!((List) e.getNewValue()).isEmpty());
+            for (Object o :(List) e.getNewValue()){
+                commandsListModel.addElement(o.toString());
+            }
         });
 
         model.addPropertyListener(DRAW.getPropertyName(), (PropertyChangeEvent evt) -> {
@@ -125,6 +156,10 @@ public class DrawingTool extends javax.swing.JFrame {
         btnRectangle = new javax.swing.JButton();
         btnRegUndo = new javax.swing.JButton();
         whiteBoardPanel = new fr.ups.m2ihm.drawingtool.ihm.WhiteBoardPanel();
+        jPanel2 = new javax.swing.JPanel();
+        commandsLabel = new javax.swing.JLabel();
+        commandsScrollPane = new javax.swing.JScrollPane();
+        commandsList = new javax.swing.JList<>();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu2 = new javax.swing.JMenu();
         menuUndo = new javax.swing.JMenuItem();
@@ -200,11 +235,42 @@ public class DrawingTool extends javax.swing.JFrame {
         whiteBoardPanel.setLayout(whiteBoardPanelLayout);
         whiteBoardPanelLayout.setHorizontalGroup(
             whiteBoardPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 255, Short.MAX_VALUE)
+            .addGap(0, 311, Short.MAX_VALUE)
         );
         whiteBoardPanelLayout.setVerticalGroup(
             whiteBoardPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 346, Short.MAX_VALUE)
+        );
+
+        commandsLabel.setText("Commands");
+
+        commandsList.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        commandsList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        commandsScrollPane.setViewportView(commandsList);
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(commandsLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(commandsScrollPane))
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(commandsLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(commandsScrollPane)
+                .addContainerGap())
         );
 
         jMenu2.setText("Edit");
@@ -239,16 +305,20 @@ public class DrawingTool extends javax.swing.JFrame {
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(whiteBoardPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 168, Short.MAX_VALUE))
+                .addGap(0, 259, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(whiteBoardPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(whiteBoardPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -305,9 +375,13 @@ public class DrawingTool extends javax.swing.JFrame {
     private javax.swing.JButton btnLine;
     private javax.swing.JButton btnRectangle;
     private javax.swing.JButton btnRegUndo;
+    private javax.swing.JLabel commandsLabel;
+    private javax.swing.JList<String> commandsList;
+    private javax.swing.JScrollPane commandsScrollPane;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JMenuItem menuRedo;
     private javax.swing.JMenuItem menuUndo;
     private fr.ups.m2ihm.drawingtool.ihm.WhiteBoardPanel whiteBoardPanel;

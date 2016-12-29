@@ -33,6 +33,17 @@ public class DefaultDrawingToolModel implements DrawingToolModel {
     public void redo() {
         undoManager.redo();
     }
+    
+    @Override
+    public void goToCommand(int i){
+        System.out.println(undoManager.getRelativeCommandDistance(i));
+        int n = undoManager.getRelativeCommandDistance(i);
+        if (n < 0){ //An undo must be done
+            undoManager.undo(-n);
+        }else if (n > 0){//A redo must be done
+            undoManager.redo(n);
+        }
+    }
 
     private enum PossibleState {
 
