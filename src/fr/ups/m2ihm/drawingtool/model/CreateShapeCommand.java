@@ -8,9 +8,12 @@ package fr.ups.m2ihm.drawingtool.model;
 import fr.ups.m2ihm.drawingtool.model.core.DrawingToolCore;
 import fr.ups.m2ihm.drawingtool.model.core.Line;
 import fr.ups.m2ihm.drawingtool.model.core.Rectangle;
+import fr.ups.m2ihm.drawingtool.model.core.Triangle;
 import fr.ups.m2ihm.drawingtool.model.core.Shape;
 import fr.ups.m2ihm.drawingtool.undomanager.Command;
 import java.awt.Point;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -66,8 +69,50 @@ public class CreateShapeCommand implements Command {
                     line.getDestination().getY() >= upperLeftBoundary.getY() &&
                     line.getDestination().getY() <= lowerRightBoundary.getY());
         }
+        if (shape instanceof Triangle){
+            Point a = ((Triangle) shape).getA();
+            Point b = ((Triangle) shape).getB();
+            Point c = ((Triangle) shape).getC();
+            
+            return (a.getX() >= upperLeftBoundary.getX() &&
+                    a.getX() <= lowerRightBoundary.getX() &&
+                    a.getY() >= upperLeftBoundary.getY() &&
+                    a.getY() <= lowerRightBoundary.getY() &&
+                    b.getX() >= upperLeftBoundary.getX() &&
+                    b.getX() <= lowerRightBoundary.getX() &&
+                    b.getY() >= upperLeftBoundary.getY() &&
+                    b.getY() <= lowerRightBoundary.getY() &&
+                    c.getX() >= upperLeftBoundary.getX() &&
+                    c.getX() <= lowerRightBoundary.getX() &&
+                    c.getY() >= upperLeftBoundary.getY() &&
+                    c.getY() <= lowerRightBoundary.getY()
+                    );
+        }
         throw new UnsupportedOperationException("Shape has not been recognized.");
         
     }
 
+    public DrawingToolCore getCore() {
+        return core;
+    }
+
+    public Shape getShape() {
+        return shape;
+    }
+    
+    
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final CreateShapeCommand other = (CreateShapeCommand) obj;
+        return (shape.equals(other.getShape()) && core.equals(other.getCore()));
+    }
+    
+   
 }

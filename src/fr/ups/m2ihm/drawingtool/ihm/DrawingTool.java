@@ -13,10 +13,12 @@ import static fr.ups.m2ihm.drawingtool.model.DrawingStateMachine.GHOST_PROPERTY;
 import static fr.ups.m2ihm.drawingtool.model.DrawingStateMachine.SHAPES_PROPERTY;
 import static fr.ups.m2ihm.drawingtool.model.PaletteEventType.DRAW_LINE;
 import static fr.ups.m2ihm.drawingtool.model.PaletteEventType.DRAW_RECTANGLE;
+import static fr.ups.m2ihm.drawingtool.model.PaletteEventType.DRAW_TRIANGLE;
 import static fr.ups.m2ihm.drawingtool.model.PaletteEventType.REGIONAL_UNDO;
 import fr.ups.m2ihm.drawingtool.model.core.Line;
 import fr.ups.m2ihm.drawingtool.model.core.Rectangle;
 import fr.ups.m2ihm.drawingtool.model.core.Shape;
+import fr.ups.m2ihm.drawingtool.model.core.Triangle;
 import fr.ups.m2ihm.drawingtool.undomanager.UndoManager;
 import java.awt.Color;
 import static java.awt.Color.green;
@@ -74,8 +76,10 @@ public class DrawingTool extends javax.swing.JFrame {
                 shape1 = (Shape) evt.getOldValue();
                 if (shape1 instanceof Line) {
                     drawingShape = new DrawingLine((Line) evt.getOldValue(), DEFAULT_GHOST_COLOR);
-                } else {
+                } else if (shape1 instanceof Rectangle){
                     drawingShape = new DrawingRectangle((Rectangle) evt.getOldValue(), DEFAULT_GHOST_COLOR);
+                } else {
+                    drawingShape = new DrawingTriangle(((Triangle) evt.getOldValue()), DEFAULT_GHOST_COLOR);
                 }
                 whiteBoardPanel.removeShape(drawingShape);
             }
@@ -83,8 +87,10 @@ public class DrawingTool extends javax.swing.JFrame {
                 shape1 = (Shape) evt.getNewValue();
                 if (shape1 instanceof Line) {
                     drawingShape = new DrawingLine((Line) evt.getNewValue(), DEFAULT_GHOST_COLOR);
-                } else {
+                } else if (shape1 instanceof Rectangle) {
                     drawingShape = new DrawingRectangle((Rectangle) evt.getNewValue(), DEFAULT_GHOST_COLOR);
+                } else {
+                    drawingShape = new DrawingTriangle((Triangle) evt.getNewValue(), DEFAULT_GHOST_COLOR);
                 }
                 whiteBoardPanel.addShape(drawingShape);
             }
@@ -97,8 +103,10 @@ public class DrawingTool extends javax.swing.JFrame {
             for (Shape shape1 : drawings) {
                 if (shape1 instanceof Line) {
                     drawingShape = new DrawingLine((Line) shape1, DEFAULT_DRAWING_COLOR);
-                } else {
+                } else if (shape1 instanceof Rectangle) {
                     drawingShape = new DrawingRectangle((Rectangle) shape1, DEFAULT_DRAWING_COLOR);
+                } else {
+                    drawingShape = new DrawingTriangle((Triangle) shape1, DEFAULT_DRAWING_COLOR);
                 }
                 whiteBoardPanel.addShape(drawingShape);
             }
@@ -115,9 +123,12 @@ public class DrawingTool extends javax.swing.JFrame {
         });
 
         model.addPropertyListener(UndoManager.REDO_COMMANDS_PROPERTY, (e) -> {
-            menuRedo.setEnabled(!((List) e.getNewValue()).isEmpty());
-            for (Object o :(List) e.getNewValue()){
-                commandsListModel.addElement(o.toString());
+            List redoList = (List) e.getNewValue();
+            menuRedo.setEnabled(!redoList.isEmpty());
+            if (!redoList.isEmpty()){
+                for (int i = redoList.size() - 1; i >= 0; i--){
+                    commandsListModel.addElement(redoList.get(i).toString());
+                }
             }
         });
 
@@ -137,6 +148,10 @@ public class DrawingTool extends javax.swing.JFrame {
         model.addPropertyListener(REGIONAL_UNDO.getPropertyName(), (PropertyChangeEvent evt) -> {
             btnRegUndo.setEnabled((Boolean) evt.getNewValue());
         });
+        
+        model.addPropertyListener(DRAW_TRIANGLE.getPropertyName(), ((evt) -> {
+            btnTriangle.setEnabled((Boolean) evt.getNewValue());
+        }));
 
         model.init();
 
@@ -155,6 +170,7 @@ public class DrawingTool extends javax.swing.JFrame {
         btnLine = new javax.swing.JButton();
         btnRectangle = new javax.swing.JButton();
         btnRegUndo = new javax.swing.JButton();
+        btnTriangle = new javax.swing.JButton();
         whiteBoardPanel = new fr.ups.m2ihm.drawingtool.ihm.WhiteBoardPanel();
         jPanel2 = new javax.swing.JPanel();
         commandsLabel = new javax.swing.JLabel();
@@ -188,6 +204,13 @@ public class DrawingTool extends javax.swing.JFrame {
             }
         });
 
+        btnTriangle.setText("Triangle");
+        btnTriangle.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnTriangleActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -197,7 +220,8 @@ public class DrawingTool extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnLine, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnRectangle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnRegUndo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnRegUndo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnTriangle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -207,8 +231,11 @@ public class DrawingTool extends javax.swing.JFrame {
                 .addComponent(btnLine)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnRectangle)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnRegUndo))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnTriangle)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
+                .addComponent(btnRegUndo)
+                .addContainerGap())
         );
 
         whiteBoardPanel.setBackground(new java.awt.Color(255, 255, 255));
@@ -312,14 +339,14 @@ public class DrawingTool extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 259, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(whiteBoardPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
@@ -370,11 +397,17 @@ public class DrawingTool extends javax.swing.JFrame {
         model.handleEvent(event);
     }//GEN-LAST:event_btnRegUndoActionPerformed
 
+    private void btnTriangleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTriangleActionPerformed
+        PaletteEvent event = new PaletteEvent(DRAW_TRIANGLE);
+        model.handleEvent(event);
+    }//GEN-LAST:event_btnTriangleActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnLine;
     private javax.swing.JButton btnRectangle;
     private javax.swing.JButton btnRegUndo;
+    private javax.swing.JButton btnTriangle;
     private javax.swing.JLabel commandsLabel;
     private javax.swing.JList<String> commandsList;
     private javax.swing.JScrollPane commandsScrollPane;
