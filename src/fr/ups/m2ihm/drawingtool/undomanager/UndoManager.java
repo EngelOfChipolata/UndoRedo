@@ -241,7 +241,7 @@ public class UndoManager {
                     }
                     firePropertyChange(UNDO_COMMANDS_PROPERTY, null, undoableCommands);
                     firePropertyChange(REDO_COMMANDS_PROPERTY, null, redoableCommands);
-                } else if (undoableCommands.size() > 1) {
+                } else if (undoableCommands.size() > n) {
                     gotoState(PossibleState.UNDO_REDOABLE);
                     for (int i = 0; i < n; i++) {
                         undoneCommand = undoableCommands.pop();

@@ -254,18 +254,39 @@ public class TriangleStateMachine implements DrawingStateMachine {
     }
     
     public void cancelDraw(DrawingToolCore core){
+        Triangle oldGhost;
         switch(currentState){
             case IDLE:
                 break;
             case FIRST_POINT_BEGIN:
+                oldGhost = ghost;
+                ghost = null;
+                gotoState(PossibleState.IDLE);
+                firePropertyChange(GHOST_PROPERTY, oldGhost, ghost);
                 break;
             case FIRST_POINT_END:
+                oldGhost = ghost;
+                ghost = null;
+                gotoState(PossibleState.IDLE);
+                firePropertyChange(GHOST_PROPERTY, oldGhost, ghost);
                 break;
             case SECOND_POINT_BEGIN:
+                oldGhost = ghost;
+                ghost = null;
+                gotoState(PossibleState.IDLE);
+                firePropertyChange(GHOST_PROPERTY, oldGhost, ghost);
                 break;
             case SECOND_POINT_END:
+                oldGhost = ghost;
+                ghost = null;
+                gotoState(PossibleState.IDLE);
+                firePropertyChange(GHOST_PROPERTY, oldGhost, ghost);
                 break;
             case THIRD_POINT_BEGIN:
+                oldGhost = ghost;
+                ghost = null;
+                gotoState(PossibleState.IDLE);
+                firePropertyChange(GHOST_PROPERTY, oldGhost, ghost);
                 break;
             default:
                 throw new AssertionError(currentState.name());
