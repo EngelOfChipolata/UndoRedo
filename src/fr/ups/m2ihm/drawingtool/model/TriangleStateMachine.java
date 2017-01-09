@@ -9,6 +9,7 @@ import static fr.ups.m2ihm.drawingtool.model.DrawingEventType.BEGIN_DRAW;
 import static fr.ups.m2ihm.drawingtool.model.DrawingEventType.CANCEL_DRAW;
 import static fr.ups.m2ihm.drawingtool.model.DrawingEventType.DRAW;
 import static fr.ups.m2ihm.drawingtool.model.DrawingEventType.END_DRAW;
+import static fr.ups.m2ihm.drawingtool.model.DrawingEventType.NO_DRAW;
 import static fr.ups.m2ihm.drawingtool.model.DrawingEventType.values;
 import fr.ups.m2ihm.drawingtool.model.core.DrawingToolCore;
 import fr.ups.m2ihm.drawingtool.model.core.Rectangle;
@@ -34,23 +35,27 @@ public class TriangleStateMachine implements DrawingStateMachine {
     private final Map<DrawingEventType, Boolean> eventAvailability;
     private UndoManager undoManager;
 
+
+
     private enum PossibleState {
-        IDLE(true, false, false, false),
-        FIRST_POINT_BEGIN(false, true, true, true),
-        FIRST_POINT_END(true, false, false, true),
-        SECOND_POINT_BEGIN(false, true, true, true),
-        SECOND_POINT_END(true, false, false, true),
-        THIRD_POINT_BEGIN(false, true, true, true);
+        IDLE(true, false, false, false, false),
+        FIRST_POINT_BEGIN(false, true, true, true, false),
+        FIRST_POINT_END(true, false, false, true, true),
+        SECOND_POINT_BEGIN(false, true, true, true, false),
+        SECOND_POINT_END(true, false, false, true, true),
+        THIRD_POINT_BEGIN(false, true, true, true, false);
         public final boolean beginDrawEnabled;
         public final boolean endDrawEnabled;
         public final boolean drawEnabled;
         public final boolean cancelDrawEnabled;
+        public final boolean noDrawEnabled;
 
-        private PossibleState(boolean beginDrawEnabled, boolean endDrawEnabled, boolean drawEnabled, boolean cancelDrawEnabled) {
+        private PossibleState(boolean beginDrawEnabled, boolean endDrawEnabled, boolean drawEnabled, boolean cancelDrawEnabled, boolean noDrawEnabled) {
             this.beginDrawEnabled = beginDrawEnabled;
             this.endDrawEnabled = endDrawEnabled;
             this.drawEnabled = drawEnabled;
             this.cancelDrawEnabled = cancelDrawEnabled;
+            this.noDrawEnabled = noDrawEnabled;
         }
     }
 
@@ -115,7 +120,10 @@ public class TriangleStateMachine implements DrawingStateMachine {
             case END_DRAW:
                 endDraw(event.getPoint(), core);
                 break;
-        }    }
+            case NO_DRAW:
+                noDraw(event.getPoint(), core);
+        }    
+    }
 
     private void fireEventAvailabilityChanged(DrawingEventType drawingEventType, boolean newAvailability) {
         Boolean oldAvailability = eventAvailability.get(drawingEventType);
@@ -160,17 +168,13 @@ public class TriangleStateMachine implements DrawingStateMachine {
         switch (currentState) {
             case IDLE:
                 gotoState(PossibleState.FIRST_POINT_BEGIN);
-                oldGhost = ghost;
-                Point ptemp = new Point (point.x + 50, point.y + 50);
-                ghost = new Triangle(point, ptemp, findLastPointForEquilateral(point, ptemp));
-                firePropertyChange(GHOST_PROPERTY, oldGhost, ghost);
                 break;
             case FIRST_POINT_BEGIN:
                 break;
             case FIRST_POINT_END:
                 gotoState(PossibleState.SECOND_POINT_BEGIN);
                 oldGhost = ghost;
-                ghost = new Triangle(p0, point, findLastPointForEquilateral(p0, point));
+                ghost = new Triangle(p0, point, point);
                 firePropertyChange(GHOST_PROPERTY, oldGhost, ghost);
                 break;
             case SECOND_POINT_BEGIN:
@@ -193,17 +197,13 @@ public class TriangleStateMachine implements DrawingStateMachine {
                 break;
             case FIRST_POINT_BEGIN:
                 gotoState(PossibleState.FIRST_POINT_BEGIN);
-                oldGhost = ghost;
-                Point ptemp = new Point (point.x + 50, point.y + 50);
-                ghost = new Triangle(point, ptemp, findLastPointForEquilateral(point, ptemp));
-                firePropertyChange(GHOST_PROPERTY, oldGhost, ghost);
                 break;
             case FIRST_POINT_END:
                 break;
             case SECOND_POINT_BEGIN:
                 gotoState(PossibleState.SECOND_POINT_BEGIN);
                 oldGhost = ghost;
-                ghost = new Triangle(p0, point, findLastPointForEquilateral(p0, point));
+                ghost = new Triangle(p0, point, point);
                 firePropertyChange(GHOST_PROPERTY, oldGhost, ghost);
                 break;
             case SECOND_POINT_END:
@@ -287,6 +287,35 @@ public class TriangleStateMachine implements DrawingStateMachine {
                 ghost = null;
                 gotoState(PossibleState.IDLE);
                 firePropertyChange(GHOST_PROPERTY, oldGhost, ghost);
+                break;
+            default:
+                throw new AssertionError(currentState.name());
+            
+        }
+    }
+    
+    private void noDraw(Point point, DrawingToolCore core) {
+        Triangle oldGhost;
+        switch(currentState){
+            case IDLE:
+                break;
+            case FIRST_POINT_BEGIN:
+                break;
+            case FIRST_POINT_END:
+                oldGhost = ghost;
+                ghost = new Triangle(p0, point, point);
+                gotoState(PossibleState.FIRST_POINT_END);
+                firePropertyChange(GHOST_PROPERTY, oldGhost, ghost);
+                break;
+            case SECOND_POINT_BEGIN:
+                break;
+            case SECOND_POINT_END:
+                oldGhost = ghost;
+                ghost = new Triangle(p0, p1, point);
+                gotoState(PossibleState.SECOND_POINT_END);
+                firePropertyChange(GHOST_PROPERTY, oldGhost, ghost);
+                break;
+            case THIRD_POINT_BEGIN:
                 break;
             default:
                 throw new AssertionError(currentState.name());

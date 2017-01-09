@@ -9,6 +9,7 @@ import static fr.ups.m2ihm.drawingtool.model.DrawingEventType.BEGIN_DRAW;
 import static fr.ups.m2ihm.drawingtool.model.DrawingEventType.CANCEL_DRAW;
 import static fr.ups.m2ihm.drawingtool.model.DrawingEventType.DRAW;
 import static fr.ups.m2ihm.drawingtool.model.DrawingEventType.END_DRAW;
+import static fr.ups.m2ihm.drawingtool.model.DrawingEventType.NO_DRAW;
 import static fr.ups.m2ihm.drawingtool.model.DrawingStateMachine.GHOST_PROPERTY;
 import static fr.ups.m2ihm.drawingtool.model.DrawingStateMachine.SHAPES_PROPERTY;
 import static fr.ups.m2ihm.drawingtool.model.PaletteEventType.DRAW_LINE;
@@ -239,17 +240,20 @@ public class DrawingTool extends javax.swing.JFrame {
         );
 
         whiteBoardPanel.setBackground(new java.awt.Color(255, 255, 255));
+        whiteBoardPanel.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseMoved(java.awt.event.MouseEvent evt) {
+                whiteBoardPanelMouseMoved(evt);
+            }
+            public void mouseDragged(java.awt.event.MouseEvent evt) {
+                whiteBoardPanelMouseDragged(evt);
+            }
+        });
         whiteBoardPanel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 whiteBoardPanelMousePressed(evt);
             }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 whiteBoardPanelMouseReleased(evt);
-            }
-        });
-        whiteBoardPanel.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
-            public void mouseDragged(java.awt.event.MouseEvent evt) {
-                whiteBoardPanelMouseDragged(evt);
             }
         });
         whiteBoardPanel.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -401,6 +405,11 @@ public class DrawingTool extends javax.swing.JFrame {
         PaletteEvent event = new PaletteEvent(DRAW_TRIANGLE);
         model.handleEvent(event);
     }//GEN-LAST:event_btnTriangleActionPerformed
+
+    private void whiteBoardPanelMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_whiteBoardPanelMouseMoved
+        DrawingEvent event = new DrawingEvent(NO_DRAW, evt.getPoint());
+        model.handleEvent(event);
+    }//GEN-LAST:event_whiteBoardPanelMouseMoved
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

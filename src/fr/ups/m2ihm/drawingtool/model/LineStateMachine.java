@@ -4,6 +4,7 @@ import static fr.ups.m2ihm.drawingtool.model.DrawingEventType.BEGIN_DRAW;
 import static fr.ups.m2ihm.drawingtool.model.DrawingEventType.CANCEL_DRAW;
 import static fr.ups.m2ihm.drawingtool.model.DrawingEventType.DRAW;
 import static fr.ups.m2ihm.drawingtool.model.DrawingEventType.END_DRAW;
+import static fr.ups.m2ihm.drawingtool.model.DrawingEventType.NO_DRAW;
 import static fr.ups.m2ihm.drawingtool.model.DrawingEventType.values;
 import fr.ups.m2ihm.drawingtool.model.core.DrawingToolCore;
 import fr.ups.m2ihm.drawingtool.model.core.Line;
@@ -104,18 +105,20 @@ public class LineStateMachine implements DrawingStateMachine {
 
     private void gotoState(PossibleState possibleState) {
         currentState = possibleState;
-        enableEvents(currentState.beginDrawEnabled, currentState.endDrawEnabled, currentState.drawEnabled, currentState.cancelDrawEnabled);
+        enableEvents(currentState.beginDrawEnabled, currentState.endDrawEnabled, currentState.drawEnabled, currentState.cancelDrawEnabled, currentState.noDrawEnabled);
     }
 
     private void enableEvents(
             boolean beginDrawEnabled,
             boolean endDrawEnabled,
             boolean drawEnabled,
-            boolean cancelDrawEnabled) {
+            boolean cancelDrawEnabled,
+            boolean noDrawEnabled) {
         fireEventAvailabilityChanged(BEGIN_DRAW, beginDrawEnabled);
         fireEventAvailabilityChanged(CANCEL_DRAW, cancelDrawEnabled);
         fireEventAvailabilityChanged(DRAW, drawEnabled);
         fireEventAvailabilityChanged(END_DRAW, endDrawEnabled);
+        fireEventAvailabilityChanged(NO_DRAW, noDrawEnabled);
 
     }
 
@@ -150,17 +153,19 @@ public class LineStateMachine implements DrawingStateMachine {
     }
 
     private enum PossibleState {
-        IDLE(true, false, false, false), BEGIN(false, true, true, true), LINE(false, true, true, true);
+        IDLE(true, false, false, false, false), BEGIN(false, true, true, true, false), LINE(false, true, true, true, false);
         public final boolean beginDrawEnabled;
         public final boolean endDrawEnabled;
         public final boolean drawEnabled;
         public final boolean cancelDrawEnabled;
+        public final boolean noDrawEnabled;
 
-        private PossibleState(boolean beginDrawEnabled, boolean endDrawEnabled, boolean drawEnabled, boolean cancelDrawEnabled) {
+        private PossibleState(boolean beginDrawEnabled, boolean endDrawEnabled, boolean drawEnabled, boolean cancelDrawEnabled, boolean noDrawEnabled) {
             this.beginDrawEnabled = beginDrawEnabled;
             this.endDrawEnabled = endDrawEnabled;
             this.drawEnabled = drawEnabled;
             this.cancelDrawEnabled = cancelDrawEnabled;
+            this.noDrawEnabled = noDrawEnabled;
         }
         
     }
@@ -190,6 +195,9 @@ public class LineStateMachine implements DrawingStateMachine {
                 break;
             case END_DRAW:
                 endDraw(core);
+                break;
+            case NO_DRAW:
+                //NOTHING
                 break;
         }
     }

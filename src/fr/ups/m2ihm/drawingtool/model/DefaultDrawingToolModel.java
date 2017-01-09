@@ -243,7 +243,7 @@ public class DefaultDrawingToolModel implements DrawingToolModel {
                 gotoState(PossibleState.REGIONAL_UNDOING);
                 break;
             case DRAWING_TRIANGLE:
-                gotoState(PossibleState.DRAWING_RECTANGLE);
+                gotoState(PossibleState.REGIONAL_UNDOING);
                 break;
             case REGIONAL_UNDOING:
                 break;
