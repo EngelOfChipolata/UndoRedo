@@ -34,6 +34,7 @@ public class TriangleStateMachine implements DrawingStateMachine {
     private Point p1;
     private final Map<DrawingEventType, Boolean> eventAvailability;
     private UndoManager undoManager;
+    private MacroManager macroManager;
 
 
 
@@ -68,6 +69,15 @@ public class TriangleStateMachine implements DrawingStateMachine {
         for (DrawingEventType eventType : values()) {
             eventAvailability.put(eventType, null);
         }
+    }
+    
+    public MacroManager getMacroManager(){
+        return macroManager;
+    }
+    
+    @Override
+    public void setMacroManager(MacroManager macroManager){
+        this.macroManager = macroManager;
     }
 
     public UndoManager getUndoManager() {

@@ -4,7 +4,8 @@ public enum PaletteEventType {
     DRAW_LINE("drawLineProperty"),
     DRAW_RECTANGLE("drawRectangleProperty"),
     DRAW_TRIANGLE("drawTriangleProperty"),
-    REGIONAL_UNDO("regionalUndoProperty");
+    REGIONAL_UNDO("regionalUndoProperty"),
+    MACRO_COMMAND("macroCommandProperty");
     private final String propertyName;
 
     private PaletteEventType(String propertyName) {

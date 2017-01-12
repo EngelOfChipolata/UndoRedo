@@ -34,6 +34,16 @@ public class RegionalUndoStateMachine implements DrawingStateMachine{
     private Point p0;
     private final Map<DrawingEventType, Boolean> eventAvailability;
     private UndoManager undoManager;
+    private MacroManager macroManager;
+    
+    public MacroManager getMacroManager(){
+        return macroManager;
+    }
+    
+    @Override
+    public void setMacroManager(MacroManager macroManager){
+        this.macroManager = macroManager;
+    }
 
     public UndoManager getUndoManager() {
         return undoManager;

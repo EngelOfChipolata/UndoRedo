@@ -16,6 +16,7 @@ import static fr.ups.m2ihm.drawingtool.model.PaletteEventType.DRAW_LINE;
 import static fr.ups.m2ihm.drawingtool.model.PaletteEventType.DRAW_RECTANGLE;
 import static fr.ups.m2ihm.drawingtool.model.PaletteEventType.DRAW_TRIANGLE;
 import static fr.ups.m2ihm.drawingtool.model.PaletteEventType.REGIONAL_UNDO;
+import static fr.ups.m2ihm.drawingtool.model.PaletteEventType.MACRO_COMMAND;
 import fr.ups.m2ihm.drawingtool.model.core.Line;
 import fr.ups.m2ihm.drawingtool.model.core.Rectangle;
 import fr.ups.m2ihm.drawingtool.model.core.Shape;
@@ -153,6 +154,10 @@ public class DrawingTool extends javax.swing.JFrame {
         model.addPropertyListener(DRAW_TRIANGLE.getPropertyName(), ((evt) -> {
             btnTriangle.setEnabled((Boolean) evt.getNewValue());
         }));
+        
+        model.addPropertyListener(MACRO_COMMAND.getPropertyName(), (evt) -> {
+            btnMacro.setEnabled((Boolean) evt.getNewValue());
+        });
 
         model.init();
 
@@ -172,10 +177,10 @@ public class DrawingTool extends javax.swing.JFrame {
         btnRectangle = new javax.swing.JButton();
         btnRegUndo = new javax.swing.JButton();
         btnTriangle = new javax.swing.JButton();
-        jComboBox1 = new javax.swing.JComboBox<>();
-        jButton1 = new javax.swing.JButton();
-        jTextField1 = new javax.swing.JTextField();
-        jToggleButton1 = new javax.swing.JToggleButton();
+        cmboMacroName = new javax.swing.JComboBox<>();
+        btnMacro = new javax.swing.JButton();
+        txtMacroName = new javax.swing.JTextField();
+        btnRecMacro = new javax.swing.JToggleButton();
         whiteBoardPanel = new fr.ups.m2ihm.drawingtool.ihm.WhiteBoardPanel();
         jPanel2 = new javax.swing.JPanel();
         commandsLabel = new javax.swing.JLabel();
@@ -216,21 +221,21 @@ public class DrawingTool extends javax.swing.JFrame {
             }
         });
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmboMacroName.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-        jButton1.setText("Macro");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnMacro.setText("Macro");
+        btnMacro.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnMacroActionPerformed(evt);
             }
         });
 
-        jTextField1.setText("jTextField1");
+        txtMacroName.setText("jTextField1");
 
-        jToggleButton1.setText("Rec");
-        jToggleButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnRecMacro.setText("Rec");
+        btnRecMacro.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jToggleButton1ActionPerformed(evt);
+                btnRecMacroActionPerformed(evt);
             }
         });
 
@@ -245,16 +250,15 @@ public class DrawingTool extends javax.swing.JFrame {
                     .addComponent(btnRectangle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnRegUndo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnTriangle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jButton1)
-                            .addGap(0, 0, Short.MAX_VALUE))
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jToggleButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(cmboMacroName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnMacro)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(txtMacroName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnRecMacro, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -268,12 +272,12 @@ public class DrawingTool extends javax.swing.JFrame {
                 .addComponent(btnTriangle)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1))
+                    .addComponent(cmboMacroName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnMacro))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jToggleButton1))
+                    .addComponent(txtMacroName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnRecMacro))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 60, Short.MAX_VALUE)
                 .addComponent(btnRegUndo)
                 .addContainerGap())
@@ -451,33 +455,34 @@ public class DrawingTool extends javax.swing.JFrame {
         model.handleEvent(event);
     }//GEN-LAST:event_whiteBoardPanelMouseMoved
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void btnMacroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMacroActionPerformed
+        PaletteEvent event = new PaletteEvent(MACRO_COMMAND, cmboMacroName.getSelectedItem().toString());
+        model.handleEvent(event);
+    }//GEN-LAST:event_btnMacroActionPerformed
 
-    private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton1ActionPerformed
+    private void btnRecMacroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRecMacroActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jToggleButton1ActionPerformed
+    }//GEN-LAST:event_btnRecMacroActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnLine;
+    private javax.swing.JButton btnMacro;
+    private javax.swing.JToggleButton btnRecMacro;
     private javax.swing.JButton btnRectangle;
     private javax.swing.JButton btnRegUndo;
     private javax.swing.JButton btnTriangle;
+    private javax.swing.JComboBox<String> cmboMacroName;
     private javax.swing.JLabel commandsLabel;
     private javax.swing.JList<String> commandsList;
     private javax.swing.JScrollPane commandsScrollPane;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JToggleButton jToggleButton1;
     private javax.swing.JMenuItem menuRedo;
     private javax.swing.JMenuItem menuUndo;
+    private javax.swing.JTextField txtMacroName;
     private fr.ups.m2ihm.drawingtool.ihm.WhiteBoardPanel whiteBoardPanel;
     // End of variables declaration//GEN-END:variables
 }

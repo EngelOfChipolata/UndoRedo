@@ -42,6 +42,12 @@ public class MacroCommand implements Command{
     
     public void add(Command c){
         commands.add(c);
+        c.execute();
+    }
+    
+    public void removeLast(){
+        Command c = commands.remove(commands.size() - 1);
+        c.undo();
     }
     
 }
