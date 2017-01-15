@@ -5,6 +5,7 @@
  */
 package fr.ups.m2ihm.drawingtool.model;
 
+import fr.ups.m2ihm.drawingtool.macrocommand.MacroManager;
 import static fr.ups.m2ihm.drawingtool.model.DrawingEventType.BEGIN_DRAW;
 import static fr.ups.m2ihm.drawingtool.model.DrawingEventType.CANCEL_DRAW;
 import static fr.ups.m2ihm.drawingtool.model.DrawingEventType.DRAW;
@@ -252,6 +253,7 @@ public class TriangleStateMachine implements DrawingStateMachine {
                //core.createShape(oldGhost);
                 Command com = new CreateShapeCommand(core, oldGhost);
                 getUndoManager().registerCommand(com);
+                getMacroManager().registerCommand(com);
 
                 gotoState(PossibleState.IDLE);
                 firePropertyChange(GHOST_PROPERTY, oldGhost, ghost);

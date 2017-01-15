@@ -5,6 +5,7 @@
  */
 package fr.ups.m2ihm.drawingtool.model;
 
+import fr.ups.m2ihm.drawingtool.macrocommand.MacroManager;
 import static fr.ups.m2ihm.drawingtool.model.DrawingEventType.BEGIN_DRAW;
 import static fr.ups.m2ihm.drawingtool.model.DrawingEventType.CANCEL_DRAW;
 import static fr.ups.m2ihm.drawingtool.model.DrawingEventType.DRAW;

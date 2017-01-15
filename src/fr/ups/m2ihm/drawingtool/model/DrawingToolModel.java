@@ -10,6 +10,8 @@ public interface DrawingToolModel {
     void undo();
     void redo();
     void goToCommand(int i);
+    void selectedMacroChanged(String name);
+    void macroRecordingToogled(String recordedMacroName);
     void addPropertyListener(PropertyChangeListener listener);
     void addPropertyListener(String propertyName, PropertyChangeListener listener);
     void removePropertyListener(PropertyChangeListener listener);

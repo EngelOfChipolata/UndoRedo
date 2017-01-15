@@ -1,5 +1,6 @@
 package fr.ups.m2ihm.drawingtool.model;
 
+import fr.ups.m2ihm.drawingtool.macrocommand.MacroManager;
 import fr.ups.m2ihm.drawingtool.model.core.DrawingToolCore;
 import fr.ups.m2ihm.drawingtool.undomanager.UndoManager;
 import java.beans.PropertyChangeListener;

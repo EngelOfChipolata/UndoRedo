@@ -3,8 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fr.ups.m2ihm.drawingtool.model;
+package fr.ups.m2ihm.drawingtool.macrocommand;
 
+import fr.ups.m2ihm.drawingtool.macrocommand.MacroManager;
+import fr.ups.m2ihm.drawingtool.macrocommand.MacroCommand;
+import fr.ups.m2ihm.drawingtool.model.DrawingEvent;
+import fr.ups.m2ihm.drawingtool.model.DrawingEventType;
+import fr.ups.m2ihm.drawingtool.model.DrawingStateMachine;
 import static fr.ups.m2ihm.drawingtool.model.DrawingEventType.BEGIN_DRAW;
 import static fr.ups.m2ihm.drawingtool.model.DrawingEventType.CANCEL_DRAW;
 import static fr.ups.m2ihm.drawingtool.model.DrawingEventType.DRAW;
@@ -13,7 +18,9 @@ import static fr.ups.m2ihm.drawingtool.model.DrawingEventType.NO_DRAW;
 import static fr.ups.m2ihm.drawingtool.model.DrawingEventType.values;
 import fr.ups.m2ihm.drawingtool.model.core.DrawingToolCore;
 import fr.ups.m2ihm.drawingtool.model.core.Shape;
+import fr.ups.m2ihm.drawingtool.undomanager.Command;
 import fr.ups.m2ihm.drawingtool.undomanager.UndoManager;
+import java.awt.Point;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.EnumMap;
@@ -27,7 +34,6 @@ import java.util.Map;
 public class MacroStateMachine implements DrawingStateMachine{
     
     private final PropertyChangeSupport support;
-    private List<Shape> ghost;
     private final Map<DrawingEventType, Boolean> eventAvailability;
     private UndoManager undoManager;
     private MacroManager macroManager;
@@ -52,7 +58,6 @@ public class MacroStateMachine implements DrawingStateMachine{
     
     public MacroStateMachine() {
         support = new PropertyChangeSupport(this);
-        ghost = null;
         eventAvailability = new EnumMap<>(DrawingEventType.class);
         for (DrawingEventType eventType : values()) {
             eventAvailability.put(eventType, null);
@@ -69,15 +74,91 @@ public class MacroStateMachine implements DrawingStateMachine{
 
     @Override
     public void init(DrawingToolCore core) {
-        List<Shape> oldGhost = ghost;
-        ghost = null;
         gotoState(PossibleState.IDLE);
-        firePropertyChange(GHOST_PROPERTY, oldGhost, null);
+        firePropertyChange(GHOST_PROPERTY, null, null);
         firePropertyChange(SHAPES_PROPERTY, null, core.getShapes());    }
 
     @Override
     public void handleEvent(DrawingEvent event, DrawingToolCore core) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        switch (event.getEventType()){
+            case BEGIN_DRAW:
+                beginDraw();
+                break;
+            case DRAW:
+                draw();
+                break;
+            case CANCEL_DRAW:
+                cancelDraw();
+                break;
+            case END_DRAW:
+                endDraw(event.getPoint(), core);
+                break;
+            case NO_DRAW:
+                //Nothing
+                break;
+            default:
+                throw new AssertionError(event.getEventType().name());
+            
+        }
+    }
+    
+    private void beginDraw(){
+        switch (currentState){
+            case IDLE:
+                //Display a ghost ?
+                gotoState(PossibleState.BEGIN);
+                break;
+            case BEGIN:
+                break;
+            default:
+                throw new AssertionError(currentState.name());
+        }
+    }
+    
+    private void draw(){
+        switch(currentState){
+            case IDLE:
+                break;
+            case BEGIN:
+                //Update ghost ?
+                gotoState(PossibleState.BEGIN);
+                break;
+            default:
+                throw new AssertionError(currentState.name());
+        }
+    }
+    
+    private void endDraw(Point point, DrawingToolCore core){
+        switch(currentState){
+            case IDLE:
+                break;
+            case BEGIN:
+                gotoState(PossibleState.IDLE);
+                Command com = getMacroManager().getSelectedMacro();
+                ((MacroCommand)com).setCreationPoint(point);
+                getUndoManager().registerCommand(com);
+                getMacroManager().registerCommand(com);
+                //Delete ghost ?
+                firePropertyChange(SHAPES_PROPERTY, null, core.getShapes());
+                break;
+            default:
+                throw new AssertionError(currentState.name());
+            
+        }
+    }
+    
+    private void cancelDraw(){
+        switch(currentState){
+            case IDLE:
+                break;
+            case BEGIN:
+                //Delete ghost
+                gotoState(PossibleState.IDLE);
+                break;
+            default:
+                throw new AssertionError(currentState.name());
+            
+        }
     }
 
     @Override

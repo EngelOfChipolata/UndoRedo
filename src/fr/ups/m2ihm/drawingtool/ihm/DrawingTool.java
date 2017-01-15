@@ -4,6 +4,8 @@
  */
 package fr.ups.m2ihm.drawingtool.ihm;
 
+import fr.ups.m2ihm.drawingtool.macrocommand.MacroCommand;
+import fr.ups.m2ihm.drawingtool.macrocommand.MacroManager;
 import fr.ups.m2ihm.drawingtool.model.*;
 import static fr.ups.m2ihm.drawingtool.model.DrawingEventType.BEGIN_DRAW;
 import static fr.ups.m2ihm.drawingtool.model.DrawingEventType.CANCEL_DRAW;
@@ -21,6 +23,7 @@ import fr.ups.m2ihm.drawingtool.model.core.Line;
 import fr.ups.m2ihm.drawingtool.model.core.Rectangle;
 import fr.ups.m2ihm.drawingtool.model.core.Shape;
 import fr.ups.m2ihm.drawingtool.model.core.Triangle;
+import fr.ups.m2ihm.drawingtool.undomanager.Command;
 import fr.ups.m2ihm.drawingtool.undomanager.UndoManager;
 import java.awt.Color;
 import static java.awt.Color.green;
@@ -133,6 +136,16 @@ public class DrawingTool extends javax.swing.JFrame {
                 }
             }
         });
+        
+        model.addPropertyListener(MacroManager.MACRO_LIST_CHANGED_PROPERTY, (e) -> {
+            List<MacroCommand> macroList = (List<MacroCommand>) e.getNewValue();
+            cmboMacroName.removeAllItems();
+            if (!macroList.isEmpty()){
+                for (MacroCommand c: macroList){
+                    cmboMacroName.addItem(c.getName());
+                }
+            }
+        });
 
         model.addPropertyListener(DRAW.getPropertyName(), (PropertyChangeEvent evt) -> {
             Boolean enabled1 = (Boolean) evt.getNewValue();
@@ -222,6 +235,16 @@ public class DrawingTool extends javax.swing.JFrame {
         });
 
         cmboMacroName.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmboMacroName.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cmboMacroNameItemStateChanged(evt);
+            }
+        });
+        cmboMacroName.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmboMacroNameActionPerformed(evt);
+            }
+        });
 
         btnMacro.setText("Macro");
         btnMacro.addActionListener(new java.awt.event.ActionListener() {
@@ -310,7 +333,7 @@ public class DrawingTool extends javax.swing.JFrame {
         whiteBoardPanel.setLayout(whiteBoardPanelLayout);
         whiteBoardPanelLayout.setHorizontalGroup(
             whiteBoardPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 281, Short.MAX_VALUE)
+            .addGap(0, 285, Short.MAX_VALUE)
         );
         whiteBoardPanelLayout.setVerticalGroup(
             whiteBoardPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -456,13 +479,24 @@ public class DrawingTool extends javax.swing.JFrame {
     }//GEN-LAST:event_whiteBoardPanelMouseMoved
 
     private void btnMacroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMacroActionPerformed
-        PaletteEvent event = new PaletteEvent(MACRO_COMMAND, cmboMacroName.getSelectedItem().toString());
-        model.handleEvent(event);
+        if (cmboMacroName.getSelectedItem() != null){
+            PaletteEvent event = new PaletteEvent(MACRO_COMMAND, cmboMacroName.getSelectedItem().toString());
+            model.handleEvent(event);
+        }
     }//GEN-LAST:event_btnMacroActionPerformed
 
     private void btnRecMacroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRecMacroActionPerformed
-        // TODO add your handling code here:
+        String macroName = txtMacroName.getText();
+        model.macroRecordingToogled(macroName);
     }//GEN-LAST:event_btnRecMacroActionPerformed
+
+    private void cmboMacroNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmboMacroNameActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cmboMacroNameActionPerformed
+
+    private void cmboMacroNameItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cmboMacroNameItemStateChanged
+        model.selectedMacroChanged((String)evt.getItem());
+    }//GEN-LAST:event_cmboMacroNameItemStateChanged
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

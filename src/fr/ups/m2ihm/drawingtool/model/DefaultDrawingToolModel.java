@@ -1,5 +1,7 @@
 package fr.ups.m2ihm.drawingtool.model;
 
+import fr.ups.m2ihm.drawingtool.macrocommand.MacroStateMachine;
+import fr.ups.m2ihm.drawingtool.macrocommand.MacroManager;
 import static fr.ups.m2ihm.drawingtool.model.PaletteEventType.DRAW_LINE;
 import static fr.ups.m2ihm.drawingtool.model.PaletteEventType.DRAW_RECTANGLE;
 import static fr.ups.m2ihm.drawingtool.model.PaletteEventType.DRAW_TRIANGLE;
@@ -32,6 +34,7 @@ public class DefaultDrawingToolModel implements DrawingToolModel {
     @Override
     public void undo() {
         undoManager.undo();
+        macroManager.undo();
     }
 
     @Override
@@ -45,10 +48,24 @@ public class DefaultDrawingToolModel implements DrawingToolModel {
         int n = undoManager.getRelativeCommandDistance(i);
         if (n < 0){ //An undo must be done
             undoManager.undo(-n);
+            macroManager.undo(-n);
         }else if (n > 0){//A redo must be done
             undoManager.redo(n);
         }
     }
+
+    @Override
+    public void selectedMacroChanged(String name) {
+        macroManager.setSelectedMacro(name);
+    }
+
+    @Override
+    public void macroRecordingToogled(String recordedMacroName) {
+        macroManager.recordToogle(recordedMacroName);
+    }
+    
+    
+    
 
     private enum PossibleState {
 
@@ -99,15 +116,17 @@ public class DefaultDrawingToolModel implements DrawingToolModel {
         DEFAULT_RECTANGLE_STATE_MACHINE.addPropertyListener(bouncingPropertyChangeListener);
         DEFAULT_TRIANGLE_STATE_MACHINE.addPropertyListener(bouncingPropertyChangeListener);
         DEFAULT_REGIONAL_UNDO_STATE_MACHINE.addPropertyListener(bouncingPropertyChangeListener);
+        DEFAULT_MACRO_STATE_MACHINE.addPropertyListener(bouncingPropertyChangeListener);
         DEFAULT_LINE_STATE_MACHINE.setUndoManager(undoManager);
         DEFAULT_RECTANGLE_STATE_MACHINE.setUndoManager(undoManager);
         DEFAULT_TRIANGLE_STATE_MACHINE.setUndoManager(undoManager);
         DEFAULT_REGIONAL_UNDO_STATE_MACHINE.setUndoManager(undoManager);
-        
+        DEFAULT_MACRO_STATE_MACHINE.setUndoManager(undoManager);
         DEFAULT_LINE_STATE_MACHINE.setMacroManager(macroManager);
         DEFAULT_RECTANGLE_STATE_MACHINE.setMacroManager(macroManager);
         DEFAULT_TRIANGLE_STATE_MACHINE.setMacroManager(macroManager);
         DEFAULT_REGIONAL_UNDO_STATE_MACHINE.setMacroManager(macroManager);
+        DEFAULT_MACRO_STATE_MACHINE.setMacroManager(macroManager);
 
         undoManager.addPropertyChangeListener(UndoManager.UNDO_COMMANDS_PROPERTY, (e) -> {
             firePropertyChange(DrawingStateMachine.SHAPES_PROPERTY, null, core.getShapes());
@@ -119,6 +138,10 @@ public class DefaultDrawingToolModel implements DrawingToolModel {
 
         undoManager.addPropertyChangeListener(UndoManager.REDO_COMMANDS_PROPERTY, (e) -> {
             firePropertyChange(UndoManager.REDO_COMMANDS_PROPERTY, e.getOldValue(), e.getNewValue());
+        });
+        
+        macroManager.addPropertyChangeListener(MacroManager.MACRO_LIST_CHANGED_PROPERTY, (e) -> {
+            firePropertyChange(MacroManager.MACRO_LIST_CHANGED_PROPERTY, e.getOldValue(), e.getNewValue());
         });
     }
 
@@ -150,6 +173,7 @@ public class DefaultDrawingToolModel implements DrawingToolModel {
     public void init() {
         gotoState(PossibleState.DRAWING_LINE);
         undoManager.init();
+        macroManager.init();
     }
 
     @Override
