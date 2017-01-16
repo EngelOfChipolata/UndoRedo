@@ -168,6 +168,20 @@ public class MacroCommand implements Command{
     public int commandSize(){
         return this.commands.size();
     }
+
+    public boolean isInside(Rectangle rectangle) {
+        boolean inside = true;
+        boolean createShapeCommandInCommand = false;
+        for (Command c: commands){
+            if (c instanceof CreateShapeCommand){
+                inside = inside && ((CreateShapeCommand) c).isInside(rectangle);
+                createShapeCommandInCommand = true;
+            }
+        }
+        return inside && createShapeCommandInCommand;
+    }
+    
+    
     
     
 }

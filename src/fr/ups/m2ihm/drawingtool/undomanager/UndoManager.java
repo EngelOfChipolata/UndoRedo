@@ -5,6 +5,7 @@
 package fr.ups.m2ihm.drawingtool.undomanager;
 
 import fr.ups.m2ihm.drawingtool.ihm.DrawingShape;
+import fr.ups.m2ihm.drawingtool.macrocommand.MacroCommand;
 import fr.ups.m2ihm.drawingtool.model.core.Rectangle;
 import fr.ups.m2ihm.drawingtool.model.CreateShapeCommand;
 import java.beans.PropertyChangeListener;
@@ -124,10 +125,19 @@ public class UndoManager {
 
     private Command findLastShapeCommandIn(Rectangle rect) {
         Command lastShapeCommandInRectangle = null;
+        System.out.println("Plop");
         for (Command c : undoableCommands) {
             if (c instanceof CreateShapeCommand && ((CreateShapeCommand) c).isInside(rect)) {
+                System.out.println("CreateShapeCom");
+                lastShapeCommandInRectangle = c;
+            }else if(c instanceof MacroCommand){
+                System.out.println("MacroCom");
+                if (((MacroCommand)c).isInside(rect))
+                    {
+                        System.out.println("MacCom in !");
                 lastShapeCommandInRectangle = c;
             }
+        }
         }
         return lastShapeCommandInRectangle;
     }

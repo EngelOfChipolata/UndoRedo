@@ -307,6 +307,8 @@ public class DrawingTool extends javax.swing.JFrame {
         );
 
         whiteBoardPanel.setBackground(new java.awt.Color(255, 255, 255));
+        whiteBoardPanel.setMinimumSize(new java.awt.Dimension(285, 346));
+        whiteBoardPanel.setName(""); // NOI18N
         whiteBoardPanel.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             public void mouseMoved(java.awt.event.MouseEvent evt) {
                 whiteBoardPanelMouseMoved(evt);
@@ -340,7 +342,11 @@ public class DrawingTool extends javax.swing.JFrame {
             .addGap(0, 346, Short.MAX_VALUE)
         );
 
+        jPanel2.setMaximumSize(new java.awt.Dimension(54, 218));
+
         commandsLabel.setText("Commands");
+
+        commandsScrollPane.setMaximumSize(new java.awt.Dimension(52, 135));
 
         commandsList.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
@@ -358,7 +364,7 @@ public class DrawingTool extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(commandsLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(commandsScrollPane))
+                    .addComponent(commandsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -367,7 +373,7 @@ public class DrawingTool extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(commandsLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(commandsScrollPane)
+                .addComponent(commandsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
